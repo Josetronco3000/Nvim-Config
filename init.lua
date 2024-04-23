@@ -1,12 +1,11 @@
 local vim = vim
 local Plug = vim.fn['plug#']
 
-
 vim.call('plug#begin')
 
 Plug('nvim-tree/nvim-tree.lua')
 
-Plug('ellisonleao/gruvbox.nvim')
+Plug('catppuccin/nvim')
 
 Plug('dcampos/cmp-snippy')
 
@@ -26,12 +25,23 @@ Plug('windwp/nvim-autopairs')
 
 Plug('lewis6991/hover.nvim')
 
+Plug('nvim-treesitter/nvim-treesitter')
+
+Plug('feline-nvim/feline.nvim')
+
+Plug('nvim-tree/nvim-web-devicons')
+
+Plug('lewis6991/gitsigns.nvim')
+
+Plug('romgrk/barbar.nvim')
+
 vim.call('plug#end')
 
 vim.cmd("set tabstop=4")
 vim.cmd("set shiftwidth=4")
 vim.cmd("set expandtab")
 vim.cmd("set number")
+vim.cmd("set buftype= ")
 
 --Configuración NvimTree
 
@@ -42,12 +52,20 @@ require("nvim-tree").setup()
 
 vim.cmd('NvimTreeOpen')
 
---Configuración Gruvbox
+--Configuración catpuccin
 
-vim.o.background = "dark"
-vim.cmd([[colorscheme gruvbox]])
+require("catppuccin").setup({
+    flavour = "mocha",
+    transparent_background = false,
+    integrations = {
+        cmp = true,
+        nvimtree = true,
+        treesitter = true,
+        barbar = true,
+    },
+})
 
-require("gruvbox").setup()
+vim.cmd("colorscheme catppuccin")
 
 --Configuración LSP
 
@@ -138,6 +156,10 @@ require('lspconfig')['autotools_ls'].setup{
     capabilities = capabilities
 }
 
+require('lspconfig')['rust_analyzer'].setup{
+    capabilities = capabilities
+}
+
 --Configuracion mason-lspconfig
 
 require("mason").setup()
@@ -150,7 +172,8 @@ require("mason-lspconfig").setup({
 	"cmake",
 	"ltex",
 	"lua_ls",
-	"autotools_ls"
+	"autotools_ls",
+    "rust_analyzer"
     }
 })
 
@@ -185,4 +208,18 @@ config = function()
     vim.o.mousemoveevent = true
 end
 
+--Configuración nvim-treesitter
 
+require('nvim-treesitter.configs').setup {
+    highlight = {enable = true}
+}
+
+--Configuración feline
+
+local ctp_feline = require('catppuccin.groups.integrations.feline')
+
+ctp_feline.setup()
+
+require("feline").setup({
+    components = ctp_feline.get()
+})
